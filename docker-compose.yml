@@ -1,0 +1,45 @@
+version: '3'
+services:
+  bedrock_server:
+    image: defektive/bedrock-server:latest
+    ports:
+      - 19132:19132/udp
+    volumes:
+      - ./data/downloads:/home/bedrock/downloads
+      - ./data/worlds:/home/bedrock/bedrock_server/worlds
+      - ./data/server.properties:/home/bedrock/bedrock_server/server.properties
+      - ./data/permissions.json:/home/bedrock/bedrock_server/permissions.json
+      - ./data/whitelist.json:/home/bedrock/bedrock_server/whitelist.json
+
+  map_server:
+    image: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./data/html:/usr/share/nginx/html:ro
+
+  ticktock:
+    image: tkambler/ticktock
+    ports:
+      - "8000:80"
+    volumes:
+      - ./data/ticktock/config.yml:/config.yml
+      - ticktock:/var/ticktock
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  docker:
+    image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/tmp/worlds:/tmp/worlds/
+    command: tail -f /dev/null
+
+  mcpe_viz:
+    image: defektive/mcpe-viz:latest
+    volumes:
+      - ./data/html:/tmp/out/
+      - ./data/tmp/worlds:/tmp/worlds/
+    command: tail -f /dev/null
+
+volumes:
+  ticktock: {}
