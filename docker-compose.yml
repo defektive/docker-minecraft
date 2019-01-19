@@ -2,6 +2,8 @@ version: '3'
 services:
   bedrock_server:
     image: defektive/bedrock-server:latest
+    stdin_open: true
+    tty: true
     ports:
       - 19132:19132/udp
     volumes:
